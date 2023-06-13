@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>InterSwarmX Control Center - Control Hub</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="control.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>InterSwarmX Control Center</h1>
+        <div class="controls">
+            <h2>Drone Controls</h2>
+            <label for="distance">Distance the drone will move:</label>
+            <input type="number" id="distance" value="20" min="20" max="500">
+            <button id="forwardBtn" class="btn">Forward</button>
+            <button id="backBtn" class="btn">Back</button>
+            <button id="leftBtn" class="btn">Left</button>
+            <button id="rightBtn" class="btn">Right</button>
+            <button id="clockwiseBtn" class="btn">Clockwise</button>
+            <button id="counterclockwiseBtn" class="btn">Counterclockwise</button>
+            <button id="takeoffBtn" class="btn">Take Off</button>
+            <button id="landBtn" class="btn">Land</button>
+        </div>
+        <div class="video-container">
+            <!-- Video feed elements will be dynamically added here -->
+        </div>
+        <h2>Drones in swarm:</h2>
+            <br>
+        <div class="drone-buttons">
+            <!-- Drone buttons will be dynamically added here -->
+        </div>
+    </div>
+</body>
+</html>
