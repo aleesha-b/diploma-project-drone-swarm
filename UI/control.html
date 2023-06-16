@@ -2,33 +2,48 @@
 <html lang="en">
 <head>
     <title>InterSwarmX Control Center - Control Hub</title>
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.min.css">
     <link rel="stylesheet" type="text/css" href="styles.css">
+
     <script src="control.js"></script>
+    <script>
+        function toggleDarkMode() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+        }
+    </script>
 </head>
 <body>
     <div class="container">
-        <h1>InterSwarmX Control Center</h1>
-        <div class="controls">
-            <h2>Drone Controls</h2>
-            <label for="distance">Distance the drone will move:</label>
-            <input type="number" id="distance" value="20" min="20" max="500">
-            <button id="forwardBtn" class="btn">Forward</button>
-            <button id="backBtn" class="btn">Back</button>
-            <button id="leftBtn" class="btn">Left</button>
-            <button id="rightBtn" class="btn">Right</button>
-            <button id="clockwiseBtn" class="btn">Clockwise</button>
-            <button id="counterclockwiseBtn" class="btn">Counterclockwise</button>
-            <button id="takeoffBtn" class="btn">Take Off</button>
-            <button id="landBtn" class="btn">Land</button>
-        </div>
         <div class="video-container">
-            <!-- Video feed elements will be dynamically added here -->
+            <img src="http://localhost:8000/drone/video_feed" alt="Video feed failed to load. Please try again." class="video-feed">
+            <h1 class="video-title">InterSwarmX Control Center</h1>
+            <button class="dark-btn btn" onclick="toggleDarkMode()">
+                <svg style="color: white" xmlns="http://www.w3.org/2000/svg" display="block" width="16" height="16" fill="currentColor" class="bi bi-sun" viewBox="0 0 16 16"> <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z" fill="white"></path> </svg>
+            </button>
         </div>
-        <h2>Drones in swarm:</h2>
-            <br>
-        <div class="drone-buttons">
-            <!-- Drone buttons will be dynamically added here -->
+        <div class="controls">
+            <div class="align-vertical">
+                <button id="takeoffBtn" class="btn">Take Off</button>
+                <button id="landBtn" class="btn">Land</button>
+                <button id="clockwiseBtn" class="btn">Clockwise</button>
+                <button id="counterclockwiseBtn" class="btn">Counterclockwise</button>
+            </div>
+            <div class="joystick">
+                <button id="forwardBtn" class="joystick-btn joystick-top"></button>
+                <button id="leftBtn" class="joystick-btn joystick-left"></button>
+                <button id="rightBtn" class="joystick-btn joystick-right"></button>
+                <button id="backBtn" class="joystick-btn joystick-bottom"></button>
+                <div class="joystick-center"></div>
+            </div>
+            <div class="align-vertical">
+            <label for="distance" >Distance (cm):</label>
+            <input type="number" id="distance" value="20" min="20" max="500">
+            <button id="predator" class="btn">Predator (mock)</button>
+            </div>
         </div>
+        <div id="controlReceived"></div>
     </div>
 </body>
 </html>

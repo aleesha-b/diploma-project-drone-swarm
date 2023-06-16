@@ -8,6 +8,7 @@ from livestock_tracking import LivestockTracker
 from drone_control import DroneControl
 
 
+car_cascade = cv2.CascadeClassifier('./haarcascade_car.xml')
 app = FastAPI()
 drone_control = DroneControl()
 livestock_tracker = LivestockTracker()
@@ -33,18 +34,6 @@ def root():
     return JSONResponse({"message": "Swarming Drones Control Center"})
 
 
-@app.post("/drones/setup")
-def setup_drones(ip_addresses: list[str]):
-    drone_control.setup_drones(ip_addresses)
-    return JSONResponse({"message": "Drones set up successfully"})
-
-
-@app.get("/drones/control")
-def get_number_of_drones():
-    drones_in_swarm = len(drone_control.drones)
-    return JSONResponse({"number_of_drones": drones_in_swarm})
-
-
 # Endpoint to retrieve video feed of the drone
 @app.get("/drone/video_feed")
 async def video_feed():
@@ -65,7 +54,7 @@ async def video_feed():
 
             gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             cows = None  # Insert a function to return the position of cows on the screen.
-            # cows = cow_cascade.detectMultiScale(gray_frame, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+            cows = car_cascade.detectMultiScale(gray_frame, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
 
             for (x, y, w, h) in cows:
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -85,4 +74,10 @@ async def video_feed():
 @app.post("/drones/control")
 def control_drone(payload: list):
     response = drone_control.send_command(payload[0], payload[1])
+    return JSONResponse({"response": response})
+
+
+@app.get("/drones/predator")
+def predator_alert():
+    response = "PREDATOR ALERT"
     return JSONResponse({"response": response})

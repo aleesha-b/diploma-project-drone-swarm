@@ -1,6 +1,4 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const videoContainer = document.querySelector(".video-container");
-    const controls = document.querySelector(".controls");
     const distanceInput = document.getElementById("distance");
     const forwardBtn = document.getElementById("forwardBtn");
     const backBtn = document.getElementById("backBtn");
@@ -10,98 +8,78 @@ document.addEventListener("DOMContentLoaded", function() {
     const counterclockwiseBtn = document.getElementById("counterclockwiseBtn");
     const takeoffBtn = document.getElementById("takeoffBtn");
     const landBtn = document.getElementById("landBtn");
-    const droneButtonsContainer = document.querySelector(".drone-buttons");
+    const droneResponse = document.getElementById("controlReceived")
+    const predatorAlert = document.getElementById("predator")
 
-    // Fetch the number of drones from the backend
-    fetch("http://localhost:8000/drones/control")
-        .then(response => response.json())
-        .then(data => {
-            const numberOfDrones = data.number_of_drones;
-            displayDroneButtons(numberOfDrones);
-            displayVideoFeed()
-        })
-        .catch(error => {
-            console.error("Failed to retrieve number of drones:", error);
-        });
+    let isButtonDisabled = false;
 
-    function displayDroneButtons(numberOfDrones) {
-        for (let i = 1; i <= numberOfDrones; i++) {
-            const droneButton = document.createElement("button");
-            droneButton.classList.add("btn", "drone-btn");
-            droneButton.textContent = "Drone " + i;
-            droneButton.dataset.droneId = i;
-            droneButtonsContainer.appendChild(droneButton);
-        }
-    }
-
-    // Add event listeners to drone buttons
-    droneButtonsContainer.addEventListener("click", function(event) {
-        if (event.target.classList.contains("drone-btn")) {
-            const droneId = event.target.dataset.droneId;
-        }
-    });
-
-
-    // Add event listeners to control buttons
+    // Event listeners to control buttons
     forwardBtn.addEventListener("click", function() {
-        const distance = distanceInput.value;
-        controlDrone("forward", distance);
+        controlButton("forward");
     });
 
     backBtn.addEventListener("click", function() {
-        const distance = distanceInput.value;
-        controlDrone("back", distance);
+        controlButton("back");
     });
 
     leftBtn.addEventListener("click", function() {
-        const distance = distanceInput.value;
-        controlDrone("left", distance);
+        controlButton("left");
     });
 
     rightBtn.addEventListener("click", function() {
-        const distance = distanceInput.value;
-        controlDrone("right", distance);
+        controlButton("right");
     });
 
     clockwiseBtn.addEventListener("click", function() {
-        const distance = distanceInput.value;
-        controlDrone("clockwise", distance);
+        controlButton("clockwise");
     });
 
     counterclockwiseBtn.addEventListener("click", function() {
-        const distance = distanceInput.value;
-        controlDrone("counterclockwise", distance);
+        controlButton("counterclockwise");
     });
 
     takeoffBtn.addEventListener("click", function() {
-        const distance = distanceInput.value;
-        controlDrone("takeoff", distance);
+        controlButton("takeoff");
     });
 
     landBtn.addEventListener("click", function() {
-        const distance = distanceInput.value;
-        controlDrone("land", distance);
+        controlButton("land");
     });
 
-    function displayVideoFeed() {
-        // Make AJAX request to backend API to retrieve video feed
-        fetch(`http://localhost:8000/drones/video_feed`)
-        .then(response => response.json())
+    predatorAlert.addEventListener("click", function() {
+        fetch(`http://localhost:8000/drones/predator`)
+            .then(response => response.json())
         .then(data => {
-            // Display video feed in the UI
-            const videoFeedElement = document.createElement("div");
-            videoFeedElement.classList.add("video-feed");
-            videoFeedElement.innerHTML = data.video_feed;
-            videoFeedElement.innerHTML += "<button class='back-btn'>Back</button>";
-            videoContainer.innerHTML = "";
-            videoContainer.appendChild(videoFeedElement);
-        })
-        .catch(error => {
-            console.error("Failed to retrieve video feed:", error);
-        });
-    }
+            if (data.response === "PREDATOR ALERT"){
+                const popup = document.createElement("div");
+                const popupBtn = document.createElement("button")
+                popup.className = "popup";
+                popupBtn.className = 'back-btn';
+                popup.textContent = data.response;
+                popupBtn.textContent = "Back"
+                document.body.appendChild(popup);
+                popup.appendChild(popupBtn);
+                popupBtn.addEventListener('click', function () {
+                    popup.remove()
+                });
 
-    function controlDrone(command, distance) {
+        }})
+        .catch(error => {
+            console.error(error);
+        });
+    });
+
+
+    function controlButton(command) {
+        if (isButtonDisabled) {
+            return; // Do nothing if button is disabled
+        }
+
+        const distance = distanceInput.value;
+
+        // Disable all buttons
+        disableButtons();
+
         // Make AJAX request to backend API to control the drone
         fetch(`http://localhost:8000/drones/control`, {
             method: "POST",
@@ -119,10 +97,53 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
             // Handle the response
             console.log("Drone control response:", data.response);
+            droneResponse.textContent = "Drone control response: " + data.response
+            setTimeout(enableButtons, 2000);
+            enableButtons(); // Re-enable buttons
         })
         .catch(error => {
             console.error("Failed to control drone:", error);
+            droneResponse.textContent = "";
+            showErrorPopup(error.message);
+            setTimeout(enableButtons, 2000);
+            enableButtons(); // Re-enable buttons
         });
     }
 
+    function disableButtons() {
+        isButtonDisabled = true;
+        forwardBtn.disabled = true;
+        backBtn.disabled = true;
+        leftBtn.disabled = true;
+        rightBtn.disabled = true;
+        clockwiseBtn.disabled = true;
+        counterclockwiseBtn.disabled = true;
+        takeoffBtn.disabled = true;
+        landBtn.disabled = true;
+    }
+
+    function enableButtons() {
+        isButtonDisabled = false;
+        forwardBtn.disabled = false;
+        backBtn.disabled = false;
+        leftBtn.disabled = false;
+        rightBtn.disabled = false;
+        clockwiseBtn.disabled = false;
+        counterclockwiseBtn.disabled = false;
+        takeoffBtn.disabled = false;
+        landBtn.disabled = false;
+    }
+
+    function showErrorPopup(message) {
+        const popup = document.createElement("div");
+        popup.className = "popup";
+        popup.textContent = message;
+
+        document.body.appendChild(popup);
+
+        // Remove the popup after 3 seconds
+        setTimeout(function() {
+            popup.remove();
+        }, 3000);
+    }
 });

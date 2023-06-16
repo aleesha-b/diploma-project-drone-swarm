@@ -53,7 +53,7 @@ class Drone:
         self.s_bat -= random.randint(0, 5)
         match command.split():
             case ["takeoff"]:
-                LOGGER.debug("TAKEOFF: Vroom Vroom Takeing Off")
+                LOGGER.debug("TAKEOFF: Vroom Vroom Taking Off")
                 time.sleep(3)
                 self.s_h += 100
                 LOGGER.debug(f"id: {id(self)}; Height: {self.s_h}")
